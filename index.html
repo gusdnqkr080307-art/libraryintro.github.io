@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>도서관 안내 앱</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nanum Gothic', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #fdfbfb, #ebedee);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px;
+      box-sizing: border-box;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 16px;
+    }
+    .high-contrast {
+      background-color: #000;
+      color: #fff;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      padding: 24px;
+      text-align: center;
+      width: 95%;
+      max-width: 600px;
+    }
+    .btn {
+      display: inline-block;
+      margin: 8px;
+      background: #4f46e5;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn:hover {
+      background: #312e81;
+    }
+    .controls {
+      margin-bottom: 20px;
+    }
+    .content {
+      margin-top: 20px;
+      text-align: left;
+    }
+    h2 {
+      color: #4f46e5;
+    }
+    .map {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 도서관 안내</h1>
+    <p>아래 메뉴에서 원하는 안내를 선택하세요.</p>
+
+    <!-- 접근성 기능 버튼 -->
+    <div class="controls">
+      <button class="btn" onclick="changeFontSize(1)">글자크기+</button>
+      <button class="btn" onclick="changeFontSize(-1)">글자크기-</button>
+      <button class="btn" onclick="readText()">음성 안내</button>
+    </div>
+
+    <!-- 기존 메뉴 -->
+    <div>
+      <button class="btn" onclick="showPage('callNumber')">청구번호 읽는 법</button>
+      <button class="btn" onclick="showPage('loanGuide')">대출·반납 안내</button>
+      <button class="btn" onclick="showPage('location')">책 위치 찾기</button>
+      <button class="btn" onclick="showPage('home')">홈으로</button>
+    </div>
+
+    <div class="content" id="content">
+      <p>도서관을 더 편리하게 이용해 보세요!</p>
+    </div>
+
+    <!-- 도서관 모식도 이미지 -->
+    <h2>📍 도서관 모식도</h2>
+    <img src="library-map.png" alt="학교 도서관 모식도" class="map">
+  </div>
+
+  <script>
+    // 글자 크기 조절
+    let fontSize = 16;
+    function changeFontSize(delta) {
+      fontSize += delta;
+      if (fontSize < 12) fontSize = 12;
+      document.body.style.fontSize = fontSize + 'px';
+    }
+
+
+    // 음성 안내
+    function readText() {
+      const text = document.getElementById('content').innerText;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ko-KR';
+      speechSynthesis.speak(utterance);
+    }
+
+    // 페이지 내용 변경
+    function showPage(page) {
+      const contentDiv = document.getElementById('content');
+      if (page === 'callNumber') {
+        contentDiv.innerHTML = `
+          <h2>청구번호 읽는 법</h2>
+          <p>도서관 책 등에는 <b>청구번호</b>가 붙어 있어요.<br>
+          예: <code>813.6 ㄱ123ㄴ</code><br><br>
+          - 앞의 숫자: 주제 분류 (한국십진분류법)<br>
+          - 문자: 저자 기호<br>
+          - 뒤 숫자/문자: 책의 고유 기호<br>
+          이 순서를 보고 서가에서 책을 찾을 수 있습니다.</p>
+        `;
+      } else if (page === 'loanGuide') {
+        contentDiv.innerHTML = `
+          <h2>대출·반납 안내</h2>
+          <ul>
+            <li>학생 1인당 최대 5권까지 대출 가능</li>
+            <li>대출 기간: 2주</li>
+            <li>연장은 1회 가능 (사서 선생님께 문의)</li>
+            <li>반납은 도서관 데스크나 반납함을 이용</li>
+          </ul>
+        `;
+      } else if (page === 'location') {
+        contentDiv.innerHTML = `
+          <h2>책 위치 찾기</h2>
+          <p>책은 주제별로 배치되어 있어요:</p>
+          <ul>
+            <li>000 ~ 099 : 총류 (백과사전, 컴퓨터 등)</li>
+            <li>100 ~ 199 : 철학</li>
+            <li>200 ~ 299 : 종교</li>
+            <li>300 ~ 399 : 사회과학</li>
+            <li>400 ~ 499 : 자연과학</li>
+            <li>500 ~ 599 : 기술과학</li>
+            <li>600 ~ 699 : 예술</li>
+            <li>700 ~ 799 : 언어</li>
+            <li>800 ~ 899 : 문학</li>
+            <li>900 ~ 999 : 역사·지리</li>
+          </ul>
+          <p>청구번호의 <b>첫 숫자</b>를 보고 해당 서가로 가면 됩니다.</p>
+        `;
+      } else {
+        contentDiv.innerHTML = `<p>도서관을 더 편리하게 이용해 보세요!</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
